@@ -7,7 +7,7 @@ import { deleteDocument, getDownloadUrl, loadDemoDocuments } from "@/lib/casey/d
 import { UploadDrop } from "@/components/casey/UploadDrop";
 import { DocumentViewer } from "@/components/casey/DocumentViewer";
 
-export const Route = createFileRoute("/_authenticated/_shell/biblioteca")({
+export const Route = createFileRoute("/_shell/biblioteca")({
   head: () => ({
     meta: [
       { title: "Biblioteca jurídica — CASEY VERUM" },

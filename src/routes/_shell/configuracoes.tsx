@@ -6,7 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { overviewQuery } from "@/lib/casey/queries";
 import { exportLibrary, loadDemoDocuments } from "@/lib/casey/documents.functions";
 
-export const Route = createFileRoute("/_authenticated/_shell/configuracoes")({
+export const Route = createFileRoute("/_shell/configuracoes")({
   head: () => ({
     meta: [
       { title: "Configurações — CASEY VERUM" },

@@ -4,7 +4,7 @@ import { AnswerPanel } from "@/components/casey/AnswerPanel";
 import { HistoryList } from "@/components/casey/HistoryList";
 import { useAnalysis } from "@/components/casey/useAnalysis";
 
-export const Route = createFileRoute("/_authenticated/_shell/memoria")({
+export const Route = createFileRoute("/_shell/memoria")({
   head: () => ({
     meta: [
       { title: "Memória da banca — CASEY VERUM" },

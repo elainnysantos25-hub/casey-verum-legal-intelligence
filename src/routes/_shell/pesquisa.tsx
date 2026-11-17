@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { searchLibrary } from "@/lib/casey/analysis.functions";
 
-export const Route = createFileRoute("/_authenticated/_shell/pesquisa")({
+export const Route = createFileRoute("/_shell/pesquisa")({
   head: () => ({
     meta: [
       { title: "Pesquisa jurídica — CASEY VERUM" },

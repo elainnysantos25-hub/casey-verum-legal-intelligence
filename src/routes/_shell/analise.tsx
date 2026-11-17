@@ -5,7 +5,7 @@ import { DocumentPicker } from "@/components/casey/DocumentPicker";
 import { HistoryList } from "@/components/casey/HistoryList";
 import { useAnalysis } from "@/components/casey/useAnalysis";
 
-export const Route = createFileRoute("/_authenticated/_shell/analise")({
+export const Route = createFileRoute("/_shell/analise")({
   head: () => ({
     meta: [
       { title: "Análise de casos — CASEY VERUM" },

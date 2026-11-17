@@ -5,7 +5,7 @@ import { DocumentPicker } from "@/components/casey/DocumentPicker";
 import { HistoryList } from "@/components/casey/HistoryList";
 import { useAnalysis } from "@/components/casey/useAnalysis";
 
-export const Route = createFileRoute("/_authenticated/_shell/teses")({
+export const Route = createFileRoute("/_shell/teses")({
   head: () => ({
     meta: [
       { title: "Teste de teses — CASEY VERUM" },

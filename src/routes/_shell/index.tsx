@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { documentsQuery, overviewQuery } from "@/lib/casey/queries";
 
-export const Route = createFileRoute("/_authenticated/_shell/painel")({
+export const Route = createFileRoute("/_shell/")({
   head: () => ({
     meta: [
       { title: "Visão geral — CASEY VERUM" },
