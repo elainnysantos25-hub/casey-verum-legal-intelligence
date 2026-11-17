@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules (CASEY VERUM)
+- The site has no login: all data access goes through server functions in `src/lib/casey/*.functions.ts` using the privileged client from `workspace.server.ts` and one shared workspace id; tables keep RLS with no anon policies so the public key cannot read them directly.
+- File uploads use a server-issued signed upload URL (`createUploadUrl`) to the private `documentos` bucket; text is extracted in the browser (mammoth / pdfjs) and indexed server-side.
+- Retrieval is hybrid (Portuguese full-text + pgvector embeddings) via the `casey_search_chunks` RPC; evidence selection and the memory "not found" rule live in `src/lib/casey/text.ts` and are covered by `text.test.ts`.
+- AI calls use `@lovable.dev/ai-gateway` only inside server handlers (`ai.server.ts`), loaded with dynamic import.
+- Router uses `setupRouterSsrQueryIntegration` so loader data hydrates identically; format numbers/dates with `src/lib/casey/format.ts`, not locale APIs, to avoid hydration mismatches.

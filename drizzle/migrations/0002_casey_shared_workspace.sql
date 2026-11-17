@@ -1,0 +1,2 @@
+GRANT EXECUTE ON FUNCTION public.casey_search_chunks(text, text, integer, uuid[]) TO service_role;
+COMMENT ON COLUMN public.documents.owner_id IS 'Workspace id. The open site uses one shared workspace (00000000-0000-0000-0000-000000000000); access goes only through server functions.';

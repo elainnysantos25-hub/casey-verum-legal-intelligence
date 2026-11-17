@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import {
   type AnalysisKind,
   type SearchHit,
@@ -30,7 +29,6 @@ export type AnalysisResult = {
 const KINDS: AnalysisKind[] = ["analysis", "memory", "thesis"];
 
 export const runAnalysis = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { kind: AnalysisKind; question: string; documentIds?: string[] }) => {
     if (!KINDS.includes(input.kind)) throw new Error("Tipo de análise inválido.");
     const question = String(input.question || "").trim();
@@ -39,8 +37,8 @@ export const runAnalysis = createServerFn({ method: "POST" })
     const documentIds = Array.isArray(input.documentIds) ? input.documentIds.filter((x) => typeof x === "string").slice(0, 30) : [];
     return { kind: input.kind, question, documentIds };
   })
-  .handler(async ({ data, context }): Promise<AnalysisResult> => {
-    const { supabase, userId } = context;
+  .handler(async ({ data }): Promise<AnalysisResult> => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     const ai = await import("./ai.server");
     const { SYSTEM_PROMPTS, buildUserInput } = await import("./prompts");
     try {
@@ -128,17 +126,17 @@ export const runAnalysis = createServerFn({ method: "POST" })
   });
 
 export const searchLibrary = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { query: string }) => {
     const query = String(input.query || "").trim().slice(0, 500);
     if (!query) throw new Error("Digite o que deseja pesquisar.");
     return { query };
   })
-  .handler(async ({ data, context }) => {
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     const ai = await import("./ai.server");
     try {
       const qVec = (await ai.embedTexts([data.query]))[0] ?? [];
-      const { data: rows, error } = await context.supabase.rpc("casey_search_chunks", {
+      const { data: rows, error } = await supabase.rpc("casey_search_chunks", {
         query_text: buildTextQuery(data.query),
         query_embedding: ai.toVectorLiteral(qVec),
         match_count: 20,
@@ -159,10 +157,10 @@ export const searchLibrary = createServerFn({ method: "POST" })
   });
 
 export const listHistory = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { kind: AnalysisKind }) => input)
-  .handler(async ({ data, context }) => {
-    const { data: rows, error } = await context.supabase
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const { data: rows, error } = await supabase
       .from("analysis_history")
       .select("id,kind,question,answer,sources,created_at")
       .eq("kind", data.kind)

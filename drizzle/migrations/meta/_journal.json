@@ -15,6 +15,13 @@
       "when": 1794947941002,
       "tag": "0001_casey_storage_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794951825719,
+      "tag": "0002_casey_shared_workspace",
+      "breakpoints": true
     }
   ]
 }

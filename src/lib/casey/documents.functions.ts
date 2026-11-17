@@ -1,5 +1,4 @@
 import { createServerFn } from "@tanstack/react-start";
-import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { MAX_DOCUMENT_CHARS, splitText } from "./text";
@@ -35,9 +34,9 @@ async function indexDocument(supabase: Db, userId: string, documentId: string, t
 }
 
 export const listDocuments = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }): Promise<DocumentSummary[]> => {
-    const { data, error } = await context.supabase
+  .handler(async (): Promise<DocumentSummary[]> => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const { data, error } = await supabase
       .from("documents")
       .select("id,name,file_type,char_count,is_demo,storage_path,created_at")
       .order("created_at", { ascending: false });
@@ -46,11 +45,11 @@ export const listDocuments = createServerFn({ method: "GET" })
   });
 
 export const getOverview = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async () => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     const [docs, hist] = await Promise.all([
-      context.supabase.from("documents").select("id", { count: "exact", head: true }),
-      context.supabase.from("analysis_history").select("id", { count: "exact", head: true }),
+      supabase.from("documents").select("id", { count: "exact", head: true }),
+      supabase.from("analysis_history").select("id", { count: "exact", head: true }),
     ]);
     if (docs.error) throw new Error(docs.error.message);
     return {
@@ -58,15 +57,14 @@ export const getOverview = createServerFn({ method: "GET" })
       analyses: hist.count ?? 0,
       databaseReady: true,
       aiReady: Boolean(process.env["LOVABLE_API_KEY"]),
-      email: (context.claims as { email?: string } | undefined)?.email ?? null,
     };
   });
 
 export const getDocumentText = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => input)
-  .handler(async ({ data, context }) => {
-    const { data: doc, error } = await context.supabase
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const { data: doc, error } = await supabase
       .from("documents")
       .select("id,name,file_type,body,is_demo,created_at")
       .eq("id", data.id)
@@ -76,18 +74,17 @@ export const getDocumentText = createServerFn({ method: "GET" })
   });
 
 export const getDownloadUrl = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => input)
-  .handler(async ({ data, context }) => {
-    const { data: doc, error } = await context.supabase.from("documents").select("storage_path").eq("id", data.id).single();
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const { data: doc, error } = await supabase.from("documents").select("storage_path").eq("id", data.id).single();
     if (error || !doc?.storage_path) throw new Error("Este documento não tem arquivo original armazenado.");
-    const { data: signed, error: sErr } = await context.supabase.storage.from("documentos").createSignedUrl(doc.storage_path, 300);
+    const { data: signed, error: sErr } = await supabase.storage.from("documentos").createSignedUrl(doc.storage_path, 300);
     if (sErr || !signed) throw new Error("Não foi possível gerar o link de download.");
     return { url: signed.signedUrl };
   });
 
 export const ingestDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { name: string; fileType: string; text: string; storagePath: string | null }) => {
     const name = String(input.name || "").trim().slice(0, 250);
     const text = String(input.text || "").trim();
@@ -97,8 +94,8 @@ export const ingestDocument = createServerFn({ method: "POST" })
     if (text.length > MAX_DOCUMENT_CHARS) throw new Error("Documento maior que 400 mil caracteres.");
     return { name, text, fileType, storagePath: input.storagePath ? String(input.storagePath) : null };
   })
-  .handler(async ({ data, context }) => {
-    const { supabase, userId } = context;
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     if (data.storagePath && !data.storagePath.startsWith(userId + "/")) throw new Error("Caminho de arquivo inválido.");
     const { data: doc, error } = await supabase
       .from("documents")
@@ -124,20 +121,19 @@ export const ingestDocument = createServerFn({ method: "POST" })
   });
 
 export const deleteDocument = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
   .inputValidator((input: { id: string }) => input)
-  .handler(async ({ data, context }) => {
-    const { data: doc } = await context.supabase.from("documents").select("storage_path").eq("id", data.id).single();
-    const { error } = await context.supabase.from("documents").delete().eq("id", data.id);
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const { data: doc } = await supabase.from("documents").select("storage_path").eq("id", data.id).single();
+    const { error } = await supabase.from("documents").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
-    if (doc?.storage_path) await context.supabase.storage.from("documentos").remove([doc.storage_path]);
+    if (doc?.storage_path) await supabase.storage.from("documentos").remove([doc.storage_path]);
     return { ok: true };
   });
 
 export const loadDemoDocuments = createServerFn({ method: "POST" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
-    const { supabase, userId } = context;
+  .handler(async () => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     const { DEMO_DOCS } = await import("./demo-docs.server");
     const { error: delErr } = await supabase.from("documents").delete().eq("is_demo", true);
     if (delErr) throw new Error(delErr.message);
@@ -168,12 +164,39 @@ export const loadDemoDocuments = createServerFn({ method: "POST" })
   });
 
 export const exportLibrary = createServerFn({ method: "GET" })
-  .middleware([requireSupabaseAuth])
-  .handler(async ({ context }) => {
+  .handler(async () => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
     const [docs, hist] = await Promise.all([
-      context.supabase.from("documents").select("id,name,file_type,is_demo,created_at,body").order("created_at"),
-      context.supabase.from("analysis_history").select("kind,question,answer,sources,created_at").order("created_at"),
+      supabase.from("documents").select("id,name,file_type,is_demo,created_at,body").order("created_at"),
+      supabase.from("analysis_history").select("kind,question,answer,sources,created_at").order("created_at"),
     ]);
     if (docs.error) throw new Error(docs.error.message);
     return { exported_at: new Date().toISOString(), documents: docs.data ?? [], history: hist.data ?? [] };
+  });
+
+export const createUploadUrl = createServerFn({ method: "POST" })
+  .inputValidator((input: { name: string; size: number }) => {
+    const name = String(input.name || "").trim();
+    const ext = (name.split(".").pop() || "").toLowerCase();
+    if (!["pdf", "docx", "txt"].includes(ext)) throw new Error("Formato não suportado. Use PDF, DOCX ou TXT.");
+    if (!(input.size > 0) || input.size > 25 * 1024 * 1024) throw new Error("Arquivo vazio ou maior que 25 MB.");
+    return { name };
+  })
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    const safe = data.name.replace(/[^\w.\-]+/g, "_").slice(-120);
+    const path = `${userId}/${crypto.randomUUID()}/${safe}`;
+    const { data: signed, error } = await supabase.storage.from("documentos").createSignedUploadUrl(path);
+    if (error || !signed) throw new Error("Não foi possível preparar o envio do arquivo.");
+    return { path: signed.path, token: signed.token };
+  });
+
+export const discardUpload = createServerFn({ method: "POST" })
+  .inputValidator((input: { path: string }) => ({ path: String(input.path || "") }))
+  .handler(async ({ data }) => {
+    const { supabase, userId } = await (await import("./workspace.server")).workspace();
+    if (!data.path.startsWith(userId + "/")) throw new Error("Caminho inválido.");
+    const { data: exists } = await supabase.from("documents").select("id").eq("storage_path", data.path).maybeSingle();
+    if (!exists) await supabase.storage.from("documentos").remove([data.path]);
+    return { ok: true };
   });

@@ -1,8 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { overviewQuery } from "@/lib/casey/queries";
 import { exportLibrary, loadDemoDocuments } from "@/lib/casey/documents.functions";
 
@@ -21,7 +20,6 @@ export const Route = createFileRoute("/_shell/configuracoes")({
 function Config() {
   const overview = useQuery(overviewQuery());
   const qc = useQueryClient();
-  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
 
   async function doExport() {
@@ -39,7 +37,7 @@ function Config() {
   }
 
   async function resetDemo() {
-    if (!confirm("Isso recarrega os quatro documentos fictícios de demonstração (seus outros arquivos são mantidos). Continuar?")) return;
+    if (!confirm("Isso recarrega os quatro documentos fictícios de demonstração (os demais arquivos são mantidos). Continuar?")) return;
     setBusy(true);
     try {
       await loadDemoDocuments();
@@ -50,13 +48,6 @@ function Config() {
     } finally {
       setBusy(false);
     }
-  }
-
-  async function signOut() {
-    await qc.cancelQueries();
-    qc.clear();
-    await supabase.auth.signOut();
-    navigate({ to: "/auth", replace: true });
   }
 
   return (
@@ -71,7 +62,7 @@ function Config() {
       <div className="two">
         <div className="card">
           <h3>Armazenamento</h3>
-          <p>Os documentos e o histórico ficam no banco de dados da plataforma, protegidos por login. Cada conta acessa apenas o próprio acervo.</p>
+          <p>Os documentos e o histórico ficam no banco de dados da plataforma, em um acervo único compartilhado. Atenção: o site é aberto — qualquer pessoa com o link pode ver, enviar e excluir documentos.</p>
           <div className="metric">{overview.data?.documents ?? "—"}</div>
           <div className="small muted">documentos indexados</div>
           <div className="actions">
@@ -88,16 +79,9 @@ function Config() {
             Verifique sempre os fundamentos legais e os documentos citados.
           </p>
           <div className="pill">{overview.data?.aiReady ? "IA conectada" : "IA pendente"}</div>
-          <div className="pill">Banco de dados por usuário</div>
+          <div className="pill">Acervo compartilhado</div>
           <div className="pill">Fontes rastreáveis</div>
           <p className="small muted">A pesquisa externa de legislação e jurisprudência não está conectada. O modelo não deve afirmar que verificou fontes oficiais.</p>
-        </div>
-      </div>
-      <div className="card" style={{ marginTop: 16 }}>
-        <h3>Conta</h3>
-        <p>Conectado como {overview.data?.email ?? "..."}</p>
-        <div className="actions">
-          <button type="button" className="btn" onClick={signOut}>Sair</button>
         </div>
       </div>
     </section>

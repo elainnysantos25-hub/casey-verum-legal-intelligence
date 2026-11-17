@@ -1,3 +1,4 @@
+import { formatInt } from "@/lib/casey/format";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { documentsQuery, overviewQuery } from "@/lib/casey/queries";
@@ -5,16 +6,16 @@ import { documentsQuery, overviewQuery } from "@/lib/casey/queries";
 export const Route = createFileRoute("/_shell/")({
   head: () => ({
     meta: [
-      { title: "Visão geral — CASEY VERUM" },
-      { name: "description", content: "Painel da CASEY VERUM: acervo, memória da banca e teste de teses." },
-      { property: "og:title", content: "Visão geral — CASEY VERUM" },
-      { property: "og:description", content: "Painel da plataforma jurídica CASEY VERUM." },
+      { title: "CASEY VERUM — Inteligência Jurídica" },
+      { name: "description", content: "Plataforma jurídica com IA: análise de casos, memória da banca e teste de teses com base no acervo do escritório." },
+      { property: "og:title", content: "CASEY VERUM — Inteligência Jurídica" },
+      { property: "og:description", content: "O conhecimento da banca. Em movimento." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
-  loader: ({ context }) => {
-    void context.queryClient.ensureQueryData(documentsQuery());
-    void context.queryClient.ensureQueryData(overviewQuery());
-  },
+  loader: ({ context }) =>
+    Promise.all([context.queryClient.ensureQueryData(documentsQuery()), context.queryClient.ensureQueryData(overviewQuery())]),
   component: Painel,
 });
 
@@ -73,7 +74,7 @@ function Painel() {
                 <div className="fileicon">{d.file_type}</div>
                 <div className="meta">
                   <strong>{d.name}</strong>
-                  <small>{d.char_count.toLocaleString("pt-BR")} caracteres indexados</small>
+                  <small>{formatInt(d.char_count)} caracteres indexados</small>
                 </div>
                 <span className="tag">Ativo</span>
               </div>

@@ -3,7 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { extractText } from "@/lib/casey/extract";
-import { ingestDocument } from "@/lib/casey/documents.functions";
+import { createUploadUrl, discardUpload, ingestDocument } from "@/lib/casey/documents.functions";
 import { fileExtension, isAcceptedFile } from "@/lib/casey/text";
 
 const MAX_BYTES = 25 * 1024 * 1024;
@@ -17,12 +17,6 @@ export function UploadDrop({ onUploaded, compact }: { onUploaded?: (ids: string[
   async function handleFiles(files: FileList | File[]) {
     const list = Array.from(files);
     if (!list.length) return;
-    const { data: userData } = await supabase.auth.getUser();
-    const uid = userData.user?.id;
-    if (!uid) {
-      toast.error("Sessão expirada. Entre novamente.");
-      return;
-    }
     const ids: string[] = [];
     for (const f of list) {
       if (!isAcceptedFile(f.name)) {
@@ -38,9 +32,8 @@ export function UploadDrop({ onUploaded, compact }: { onUploaded?: (ids: string[
         const text = await extractText(f);
         if (!text) throw new Error("Não foi possível extrair texto (PDF escaneado sem OCR?).");
         setBusy(`Enviando ${f.name}...`);
-        const safe = f.name.replace(/[^\w.\-]+/g, "_").slice(-120);
-        const path = `${uid}/${crypto.randomUUID()}/${safe}`;
-        const up = await supabase.storage.from("documentos").upload(path, f, { contentType: f.type || undefined });
+        const { path, token } = await createUploadUrl({ data: { name: f.name, size: f.size } });
+        const up = await supabase.storage.from("documentos").uploadToSignedUrl(path, token, f, { contentType: f.type || "application/octet-stream" });
         if (up.error) throw new Error("Falha no envio do arquivo: " + up.error.message);
         setBusy(`Indexando ${f.name}...`);
         try {
@@ -50,7 +43,7 @@ export function UploadDrop({ onUploaded, compact }: { onUploaded?: (ids: string[
           ids.push(res.id);
           toast.success(`${f.name} armazenado e indexado (${res.chunks} trechos).`);
         } catch (e) {
-          await supabase.storage.from("documentos").remove([path]);
+          await discardUpload({ data: { path } }).catch(() => undefined);
           throw e;
         }
       } catch (e) {
@@ -89,7 +82,7 @@ export function UploadDrop({ onUploaded, compact }: { onUploaded?: (ids: string[
         <>
           {!compact && <div className="arrow">⇧</div>}
           <strong style={{ fontSize: 13 }}>Arraste arquivos ou clique para selecionar</strong>
-          <p className="small muted">PDF, DOCX e TXT · até 25 MB · armazenados com segurança na sua conta.</p>
+          <p className="small muted">PDF, DOCX e TXT · até 25 MB · armazenados no acervo da banca.</p>
         </>
       )}
       <input

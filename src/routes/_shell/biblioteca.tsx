@@ -1,3 +1,4 @@
+import { formatInt, formatDate } from "@/lib/casey/format";
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -94,8 +95,8 @@ function Biblioteca() {
               <div className="meta">
                 <strong>{d.name}</strong>
                 <small>
-                  {d.char_count.toLocaleString("pt-BR")} caracteres · {d.is_demo ? "Documento de demonstração" : "Arquivo enviado"} ·{" "}
-                  {new Date(d.created_at).toLocaleDateString("pt-BR")}
+                  {formatInt(d.char_count)} caracteres · {d.is_demo ? "Documento de demonstração" : "Arquivo enviado"} ·{" "}
+                  {formatDate(d.created_at)}
                 </small>
               </div>
               <button type="button" className="btn sm" onClick={() => setViewing(d.id)}>Ver</button>

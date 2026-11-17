@@ -1,3 +1,4 @@
+import { formatDate } from "@/lib/casey/format";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import ReactMarkdown from "react-markdown";
@@ -17,7 +18,7 @@ export function HistoryList({ kind }: { kind: AnalysisKind }) {
         {hist.data.map((h) => (
           <div key={h.id}>
             <button type="button" className="docrow" style={{ width: "100%", textAlign: "left", color: "inherit" }} onClick={() => setOpen(open === h.id ? null : h.id)}>
-              <span className="tag">{new Date(h.created_at).toLocaleDateString("pt-BR")}</span>
+              <span className="tag">{formatDate(h.created_at)}</span>
               <div className="meta">
                 <strong>{h.question.slice(0, 160)}{h.question.length > 160 ? "…" : ""}</strong>
               </div>

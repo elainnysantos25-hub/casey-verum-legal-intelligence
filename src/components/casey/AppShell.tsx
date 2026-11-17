@@ -5,7 +5,7 @@ import logo from "@/assets/logo-casey.jpeg.asset.json";
 import { overviewQuery } from "@/lib/casey/queries";
 
 const NAV = [
-  { to: "/painel", ico: "⌂", label: "Visão geral" },
+  { to: "/", ico: "⌂", label: "Visão geral" },
   { to: "/pesquisa", ico: "⌕", label: "Pesquisa jurídica" },
   { to: "/biblioteca", ico: "▤", label: "Biblioteca" },
   { to: "/memoria", ico: "◈", label: "Memória da banca" },
@@ -42,7 +42,7 @@ export function AppShell() {
         <div className="navlabel">PLATAFORMA</div>
         <nav className="nav">
           {NAV.map((n) => (
-            <Link key={n.to} to={n.to} activeProps={{ className: "active" }}>
+            <Link key={n.to} to={n.to} activeOptions={{ exact: n.to === "/" }} activeProps={{ className: "active" }}>
               <span className="ico">{n.ico}</span> {n.label}
             </Link>
           ))}
@@ -50,7 +50,7 @@ export function AppShell() {
         <div className="sidefoot">
           Conhecimento que gera resultado.
           <br />
-          <span className="faint">{overview.data?.email ?? ""}</span>
+          <span className="faint">Acervo compartilhado da banca</span>
         </div>
       </aside>
       <main className="main">
