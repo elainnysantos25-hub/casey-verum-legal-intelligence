@@ -1,44 +1,114 @@
-# CASEY VERUM Legal Intelligence
+# CASEY VERUM
+### Inteligência Jurídica Contextual
 
-Quero importar e publicar meu projeto CASEY VERUM, uma plataforma jurídica com inteligência artificial.
+**O conhecimento da banca. Em movimento.**
 
-Já tenho o código do projeto e quero que você aproveite a estrutura e o design existentes, sem reconstruir a interface do zero.
+A CASEY VERUM é uma plataforma de inteligência jurídica desenvolvida para transformar documentos, experiências e estratégias acumuladas por escritórios de advocacia em conhecimento acessível e reutilizável.
 
-Preciso que três funcionalidades realmente funcionem:
+Por meio da inteligência artificial, a plataforma busca apoiar a análise de casos, a recuperação de conhecimento institucional e a avaliação crítica de teses jurídicas, permitindo que advogados desenvolvam estratégias mais fundamentadas e aproveitem o histórico de atuação de seus escritórios.
 
-1. Análise de casos: o usuário apresenta os fatos e documentos, e a IA realiza uma análise jurídica estruturada, identificando problemas jurídicos, fundamentos, argumentos favoráveis e contrários, provas, riscos e estratégias.
+## Objetivo
 
-2. Memória da banca: o usuário consulta casos e documentos anteriormente cadastrados. Por exemplo: "Já trabalhamos com algum caso de Direito Tributário?". A IA deve pesquisar os registros existentes e responder com base neles, sem inventar informações.
+A CASEY VERUM parte de um problema recorrente na advocacia: o conhecimento produzido ao longo dos anos frequentemente permanece disperso entre documentos, processos, pareceres e experiências individuais dos profissionais.
 
-3. Teste de teses: o usuário apresenta uma tese jurídica, e a IA avalia criticamente se ela se sustenta, explicando os fundamentos, as fragilidades, os contra-argumentos e possíveis melhorias.
+A proposta é transformar esse acervo em uma base de conhecimento institucional, permitindo que informações e estratégias anteriormente desenvolvidas sejam recuperadas e utilizadas na condução de novos casos.
 
-Quero permitir upload de documentos PDF, DOCX e TXT, armazenamento persistente, pesquisa documental e respostas fundamentadas.
+## Funcionalidades
 
-Configure o backend, o banco de dados e a integração com um modelo de IA. Não quero botões demonstrativos ou respostas simuladas.
+### 1. Análise de Casos
 
-Mantenha o nome CASEY VERUM, a identidade visual e a navegação existentes.
+Ferramenta de apoio à análise jurídica de situações concretas, considerando os fatos apresentados e os documentos disponibilizados.
 
-Quero publicar diretamente pelo Lovable, sem instalar programas no meu computador. Antes de publicar, teste as três funcionalidades e informe quais integrações ou configurações ainda dependem de mim.
+A análise busca identificar:
 
-This project was built with [Lovable](https://lovable.dev).
+- Questões jurídicas relevantes;
+- Fundamentos e argumentos aplicáveis;
+- Argumentos favoráveis e contrários;
+- Provas e elementos documentais;
+- Riscos e fragilidades;
+- Possíveis estratégias de atuação.
 
-**Live app**: https://casey-verum-legal-intelligence.lovable.app
+O objetivo é oferecer uma avaliação estruturada que auxilie o advogado na construção de seu raciocínio jurídico e na tomada de decisões.
 
-## Build with Lovable
+### 2. Memória da Banca
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/a01d31a4-8866-4516-b3e5-20b96f97beab).
+Sistema de recuperação e consulta ao conhecimento institucional do escritório.
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+A funcionalidade permite pesquisar documentos, casos e informações anteriormente cadastrados, utilizando perguntas em linguagem natural.
 
-## Development
+Por exemplo:
 
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+*"O escritório já atuou em algum caso semelhante envolvendo responsabilidade civil contratual?"*
 
-```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
-npm run dev
-```
+A proposta é localizar experiências relevantes e permitir que conhecimentos produzidos em trabalhos anteriores contribuam para novos casos.
+
+### 3. Teste de Teses
+
+Ferramenta destinada à avaliação crítica de argumentos e estratégias jurídicas.
+
+O usuário apresenta uma tese e a inteligência artificial examina sua consistência, considerando:
+
+- Fundamentação jurídica;
+- Coerência argumentativa;
+- Possíveis objeções e contra-argumentos;
+- Fragilidades da tese;
+- Riscos jurídicos;
+- Alternativas para aprimorar a argumentação.
+
+A finalidade é estimular uma análise crítica antes da adoção de determinada estratégia jurídica.
+
+### 4. Biblioteca Jurídica
+
+Ambiente destinado à organização, ao armazenamento e à consulta de documentos jurídicos.
+
+A biblioteca constitui a base documental utilizada para preservar e recuperar o conhecimento institucional, incluindo contratos, pareceres, peças processuais e outros materiais relevantes.
+
+### 5. Pesquisa Jurídica
+
+Espaço de apoio à investigação de questões jurídicas e à consulta de informações relacionadas aos documentos e conhecimentos disponíveis na plataforma.
+
+A ferramenta busca contribuir para a organização da pesquisa e a identificação de fundamentos relevantes.
+
+## Diferencial da Plataforma
+
+A CASEY VERUM não foi concebida apenas como uma ferramenta de geração de respostas jurídicas.
+
+Seu diferencial está na proposta de integrar três dimensões complementares:
+
+**Analisar:** compreender os problemas jurídicos e estruturar possíveis estratégias.
+
+**Recordar:** recuperar conhecimentos e experiências acumulados pelo escritório.
+
+**Questionar:** submeter argumentos e teses a uma avaliação crítica.
+
+A integração dessas dimensões pretende transformar o conhecimento institucional em um recurso estratégico para a atuação jurídica.
+
+## Tecnologia
+
+O projeto foi desenvolvido utilizando o Lovable, com uma interface web voltada à experiência de profissionais do Direito.
+
+A arquitetura contempla a integração entre interface, armazenamento de documentos, banco de dados e recursos de inteligência artificial.
+
+A disponibilidade das funcionalidades depende das integrações e configurações presentes no ambiente de execução.
+
+## Responsabilidade e Limitações
+
+A CASEY VERUM é uma ferramenta de apoio à atividade jurídica e não substitui a análise, a interpretação ou a responsabilidade técnica de profissionais habilitados.
+
+As respostas produzidas por inteligência artificial devem ser verificadas, especialmente quanto à precisão das informações, à validade dos fundamentos jurídicos e à atualidade da legislação e da jurisprudência.
+
+A utilização de documentos deve observar os requisitos de confidencialidade, proteção de dados e sigilo profissional aplicáveis.
+
+## Acesso à Plataforma
+
+**Aplicação web:** https://casey-verum-legal-intelligence.lovable.app
+
+## Desenvolvimento
+
+Projeto desenvolvido com [Lovable](https://lovable.dev), com código-fonte versionado no GitHub.
+
+---
+
+**CASEY VERUM — Inteligência Jurídica Contextual**
+
+*O conhecimento da banca. Em movimento.*
