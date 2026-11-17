@@ -1,0 +1,12 @@
+[
+ {"capability":"interface (visual, logo, navegação)","source":"public/index.html","outcome":"recriar em TanStack mantendo CSS e menu","status":"in_progress","next_action":"portar páginas"},
+ {"capability":"banco de dados (documentos, trechos, histórico)","source":"Cloudflare D1 (schema.sql)","outcome":"migrate para Lovable Cloud","status":"in_progress","next_action":"migração SQL com RLS"},
+ {"capability":"registros existentes","source":"D1 remoto (nunca implantado: database_id placeholder) + IndexedDB local","outcome":"sem exportação; documentos de demonstração recriados","status":"accepted","next_action":"nenhuma — usuário pode reenviar arquivos"},
+ {"capability":"autenticação","source":"Cloudflare Access (JWT)","outcome":"migrate para login do Lovable Cloud (e-mail/senha, Google, Lovable)","status":"in_progress","next_action":"tela /auth e rotas protegidas"},
+ {"capability":"usuários existentes","source":"Cloudflare Access (sem banco de usuários)","outcome":"não há contas a migrar","status":"accepted","next_action":"nenhuma"},
+ {"capability":"armazenamento de arquivos","source":"apenas texto no IndexedDB/D1","outcome":"bucket privado + texto extraído no banco","status":"in_progress","next_action":"criar bucket e políticas"},
+ {"capability":"IA generativa","source":"Workers AI llama-3.1-8b","outcome":"Lovable AI Gateway (openai/gpt-6.1-sol)","status":"in_progress","next_action":"server functions"},
+ {"capability":"pesquisa documental (RAG)","source":"busca lexical no Worker","outcome":"busca híbrida: texto completo em português + vetorial","status":"in_progress","next_action":"RPC de busca"},
+ {"capability":"segredos","source":"wrangler vars ACCESS_*","outcome":"metadados da plataforma Cloudflare — não necessários","status":"accepted","next_action":"nenhuma"},
+ {"capability":"verificação","source":"testes manuais do INSTRUCOES","outcome":"executar os 4 testes com IA real","status":"pending","next_action":"Playwright com usuário de teste"}
+]
